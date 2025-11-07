@@ -26,11 +26,3 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python notify.py
-
-      - name: Commit results
-        run: |
-          git config --local user.email "s5935512064@phuket.psu.ac.th"
-          git config --local user.name "s5935512064"
-          git add available_dates.json notified_dates.json
-          git diff --staged --quiet || git commit -m "Update availability results [$(date)]"
-          git push
