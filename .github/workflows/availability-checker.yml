@@ -1,42 +1,36 @@
-name: Availability Checker Bot
+name: Availability Checker
 
-# รันทุก 5 นาที
 on:
   schedule:
-    - cron: '*/5 * * * *'  # ทุก 5 นาที
-  workflow_dispatch:  # อนุญาตให้รันด้วยตนเองได้
+    - cron: "*/5 * * * *" # รันทุก 5 นาที
+  workflow_dispatch: # อนุญาตให้รันด้วยตนเอง
 
 jobs:
   check-availability:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
-        
-    - name: Run availability checker
-      env:
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      run: |
-        python notify.py
-        
-    - name: Commit and push if changed
-      run: |
-        git config --global user.name 'GitHub Actions Bot'
-        git config --global user.email 'actions@github.com'
-        git add -A
-        if ! git diff --cached --quiet; then
-          git commit -m "🤖 Update availability data - $(date '+%Y-%m-%d %H:%M:%S')"
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run availability checker
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python notify.py
+
+      - name: Commit results
+        run: |
+          git config --local user.email "s5935512064@phuket.psu.ac.th"
+          git config --local user.name "s5935512064"
+          git add available_dates.json notified_dates.json
+          git diff --staged --quiet || git commit -m "Update availability results [$(date)]"
           git push
-        else
-          echo "No changes to commit"
