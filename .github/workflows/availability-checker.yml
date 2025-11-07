@@ -2,7 +2,7 @@ name: Availability Checker
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # รันทุก 5 นาที
+    - cron: "*/15 * * * *" # รันทุก 5 นาที
   workflow_dispatch: # อนุญาตให้รันด้วยตนเอง
 
 jobs:
